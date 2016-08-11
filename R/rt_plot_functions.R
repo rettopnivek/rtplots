@@ -14,7 +14,8 @@
 
 ### TO DO ###
 # Add references
-# Add examples
+# Add examples (hazard function)
+# Add aggregation over group factor (hazard function)
 # Add accuracy-latency plots
 # Add helper functions for plotting variability (e.g. SEs)
 
@@ -318,25 +319,38 @@ pdf_curve = function( rt, ch, sel = 1, grp = NULL, plt = NULL,
 #' @param ch a vector of binary choices (i.e. 0 or 1).
 #' @param sel If 0, the PDF for responses times when choice = 0 is
 #'   drawn. If 1, the PDF for responses times when choice = 1 is drawn.
-#' @param draw logical; indicates if a line should be drawn.
-#' @param out logical; indicates if output should be returned.
+#' @param opt logical vector; indicates if 1) the joint distribution
+#'   should be used, 2) the line should be drawn, and 3) if output
+#'   should be returned.
 #' @param ...  additional plotting parameters.
 #' @return A matrix giving the selected response times, density
 #'   estimates, cumulative probabilities, and the estimated hazard
 #'   function.
 #' @export
 
-hazard_curve = function(rt, ch, sel, draw = T, out = F, ...) {
+hazard_curve = function(rt, ch, sel = 1, opt = c(T,T,F), ...) {
 
+  # Set options for joint distribution, drawing, and output
+  jnt = opt[1];
+  draw = opt[2];
+  out = opt[3];
+
+  # Extract relevant response times
   x = rt[ ch == sel ]
+
+  adj = mean( ch == sel )
 
   # Estimate PDF
   dn = density(x)
-  # Extract density estimates for
+  # Extract density estimates for observed response times
   df = approxfun(dn) # Approximates density function
-
   g = df( sort(x) )
+
+  # Estimate distribution function values
   G = (1:length(x))/length(x)
+
+  # Adjust values for joint distribution
+  if (jnt) { g = g*adj; G = G*adj }
 
   h = g/(1-G) # Calculate empirical hazard function
 

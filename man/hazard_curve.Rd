@@ -4,7 +4,7 @@
 \alias{hazard_curve}
 \title{Estimated hazard function for response time and choice data.}
 \usage{
-hazard_curve(rt, ch, sel, draw = T, out = F, ...)
+hazard_curve(rt, ch, sel = 1, opt = c(T, T, F), ...)
 }
 \arguments{
 \item{rt}{vector of response times.}
@@ -14,9 +14,9 @@ hazard_curve(rt, ch, sel, draw = T, out = F, ...)
 \item{sel}{If 0, the PDF for responses times when choice = 0 is
 drawn. If 1, the PDF for responses times when choice = 1 is drawn.}
 
-\item{draw}{logical; indicates if a line should be drawn.}
-
-\item{out}{logical; indicates if output should be returned.}
+\item{opt}{logical vector; indicates if 1) the joint distribution
+should be used, 2) the line should be drawn, and 3) if output
+should be returned.}
 
 \item{...}{additional plotting parameters.}
 }

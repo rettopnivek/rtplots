@@ -1,0 +1,18 @@
+{
+    "contents" : "\n\n\nlibrary( seqmodels )\nlibrary( rtplots )\n\nN = 1000\nprm = c(1,4,0,1,2,0)\nsim = rwaldrace( N, prm[1], prm[2], prm[3], prm[4], prm[5], prm[6] )\nrt = sim[,1]; ch = sim[,2]\n\nx11(width=12);\nlayout( cbind(1,2) )\nblankRTplot(xDim=c(0,1))\n\n# True distributions\nval = seq(0,2,length=1000)\np1 = pwaldrace(val,1, prm[1], prm[2], prm[3], prm[4], prm[5], prm[6] )\np0 = pwaldrace(val,0, prm[1], prm[2], prm[3], prm[4], prm[5], prm[6] )\n\nlines(val,p1,col='blue')\nlines(val,p0,col='blue',lty = 2)\n\n# Empirical estimates\ncdf_curve(rt,ch)\nplt = list( ln = list( lty = 2 ) )\ncdf_curve(rt,ch,sel=0,plt=plt)\n\n# Hazard curve\nh1 = dwaldrace(val,1, prm[1], prm[2], prm[3], prm[4], prm[5], prm[6] )\nh1 = h1/(1-p1)\nh0 = dwaldrace(val,0, prm[1], prm[2], prm[3], prm[4], prm[5], prm[6] )\nh0 = h0/(1-p0)\n\nplot( val, h1, type = 'l' )\nlines( val, h0, lty = 2 )\n\nhazard_curve(rt,ch,col='red')\nhazard_curve(rt,ch,sel=0,lty = 2, col='red')",
+    "created" : 1470955107082.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "4224728030",
+    "id" : "A888C197",
+    "lastKnownWriteTime" : 21392300099829876,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}
