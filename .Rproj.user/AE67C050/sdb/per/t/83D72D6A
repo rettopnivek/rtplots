@@ -1,0 +1,18 @@
+{
+    "contents" : "#' Response time and choice data from a priming task.\n#'\n#' A dataset containing response times and choice data for\n#' 25 subjects who completed a word identification task with\n#' immediate word priming. Subjects completed both a\n#' two-alternative forced-choice task and a same-different\n#' task, alternating between tasks every  80 blocks. Response\n#' times faster than 200 ms and slower than 4 seconds have been\n#' trimmed.\n#'\n#' @format A data frame with 31879 rows and 5 variables:\n#' \\describe{\n#'   \\item{Subject}{The index number for the 25 subjects.}\n#'   \\item{Accuracy}{An incorrect response is 0, a correct\n#'     response is 1.}\n#'   \\item{Choice}{Coded as 0 if the subject picked left/same\n#'     and coded 1 if the subject picked right/different.}\n#'   \\item{RT}{The duration from the time at which the on-screen\n#'     choice alternatives were displayed and a subject's choice,\n#'     in seconds.}\n#'   \\item{Condition}{The index number for the current condition\n#'     (see notes).}\n#'   }\n#' @note\n#' The conditions of the experiment are provided in the following\n#' table. The first column gives the index number. The second\n#' column indicates the type of task, where 2AFC refers to the\n#' two-alternative forced-choice task, and SD refers to the\n#' same-different task. Column three reports whether the target\n#' word or a foil word was primed. Column four indicates the\n#' duration in ms for the prime word. Column five indicates the\n#' type of correct response where L denotes left, R denotes right,\n#' S denotes same, and D denotes different.\n#' \\tabular{rcccl}{\n#'  0  \\tab 2AFC \\tab Target \\tab 50  \\tab L\\cr\n#'  1  \\tab      \\tab        \\tab     \\tab R\\cr\n#'  2  \\tab      \\tab        \\tab 400 \\tab L\\cr\n#'  3  \\tab      \\tab        \\tab     \\tab R\\cr\n#'  4  \\tab      \\tab Foil   \\tab 50  \\tab L\\cr\n#'  5  \\tab      \\tab        \\tab     \\tab R\\cr\n#'  6  \\tab      \\tab        \\tab 400 \\tab L\\cr\n#'  7  \\tab      \\tab        \\tab     \\tab R\\cr\n#'  8  \\tab SD   \\tab Target \\tab 50  \\tab S\\cr\n#'  9  \\tab      \\tab        \\tab     \\tab D\\cr\n#'  10 \\tab      \\tab        \\tab 400 \\tab S\\cr\n#'  11 \\tab      \\tab        \\tab     \\tab D\\cr\n#'  12 \\tab      \\tab Foil   \\tab 50  \\tab S\\cr\n#'  13 \\tab      \\tab        \\tab     \\tab D\\cr\n#'  14 \\tab      \\tab        \\tab 400 \\tab S\\cr\n#'  15 \\tab      \\tab        \\tab     \\tab D\n#' }\n\"priming_data\"\n",
+    "created" : 1478535730441.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2240368227",
+    "id" : "83D72D6A",
+    "lastKnownWriteTime" : 1478536620,
+    "path" : "F:/Stuff/Kevin's Stuff/Postdoc/R packages/rtplots/R/data.R",
+    "project_path" : "R/data.R",
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

@@ -5,7 +5,7 @@
 \title{Quantile-probability estimates}
 \usage{
 quantile_points(rt, ch, sel = 1, prb = seq(0.1, 0.9, 0.2), grp = NULL,
-  plt = NULL, opt = c(T, T, F))
+  opt = list(), ...)
 }
 \arguments{
 \item{rt}{vector of response times.}
@@ -19,24 +19,38 @@ estimates for responses times when choice = 1 are drawn.}
 \item{prb}{the sequence of cumulative probabilities for which the
 quantiles should be determined.}
 
-\item{plt}{a named list that allows specification of graphical
-parameters. The named list plt$ln can be used to set the graphical
-elements (e.g.. the options \code{lwd} and \code{lty}) for the
-drawn line. The named list plt$pt can be used to
-set the graphical elements (e.g. the option \code{pch}) for the
-drawn points.}
+\item{grp}{an optional vector with a grouping factor (e.g. subjects).}
 
-\item{opt}{logical vector; indicates if 1) the joint distribution
-should be used, 2) the line should be drawn, and 3) if output
-should be returned.}
+\item{opt}{a list of named options:
+\describe{
+  \item{\code{jnt}}{If true, the joint distribution is used.}
+  \item{\code{draw}}{If true, the curve is drawn.}
+  \item{\code{out}}{If true, output is returned.}
+  \item{\code{flip}}{If true, the curve is flipped about the
+    x-axis.}
+  \item{\code{pts}}{If true, draw points instead of lines.}
+}}
+
+\item{...}{additional plotting parameters.}
 }
 \value{
-A matrix giving the quantile estimates and the corresponding
-  cumulative probabilities.
+A list consisting of...
+\describe{
+  \item{\code{pv}}{a data frame with the plotting values
+    used for the x-axis and the y-axis.}
+  \item{\code{g}}{when a grouping factor is present, a list
+    with the matrix of y-axis values per level and the
+    associated matrix of quantiles.}
+  \item{\code{v}}{a list of additional variables, the choice
+    proportion for each level and the choice selection.}
+  \item{\code{i}}{a list of the input variables.}
+  \item{\code{opt}}{a list of the options used.}
+  }
 }
 \description{
-Draws the estimated quantiles based on the corresponding joint
-cumulative probabilities for a set of response times and choices.
+Draws the estimated quantiles based on the corresponding
+cumulative probabilities for a set of response times
+(conditioned on choice).
 }
 \examples{
 # Load in example dataset
@@ -46,21 +60,18 @@ layout( cbind(1,2) )
 # Single subject
 sel = d$Condition == 6 & d$Subject == 20
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot(xDim = c(0,1), ver='QPE')
-quantile_points( rt, ch )
-plt = list( ln = list( type = 'n' ), pt = list( pch = 18,
-  col = 'red' ) )
-quantile_points( rt, ch, sel = 0, plt = plt )
+blankRTplot( xDim = c(0,1) )
+quantile_points( rt, ch, opt = list( pts = F ) )
+quantile_points( rt, ch, pch = 21, bg = 'white' )
+quantile_points( rt, ch, sel = 0, opt = list( pts = F ), lty = 2 )
+quantile_points( rt, ch, sel = 0, pch = 24, bg = 'white' )
 # Aggregating over multiple subjects
 sel = d$Condition == 6
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( xDim = c(0,1), bty = 'l', ver = 'QPE', cex.axis = 1.5,
-  cex.lab = 1.5 )
-plt = list( ln = list( type = 'n' ),
-  pt = list( bg = 'grey', pch = 21, cex = 1.5 ) )
-quantile_points( rt, ch, sel = 1, plt = plt )
-plt = list( ln = list( type = 'n' ),
-  pt = list( bg = 'white', pch = 22, cex = 1.5 ) )
-quantile_points( rt, ch, sel = 0, plt = plt )
+blankRTplot( xDim = c(0,1), bty = 'l', cex.axis = 1.5, cex.lab = 1.5 )
+quantile_points( rt, ch, grp = grp, opt = list( pts = F ), lwd = 2 )
+quantile_points( rt, ch, grp = grp, pch = 21, bg = 'white', cex = 1.2 )
+quantile_points( rt, ch, sel = 0, grp = grp, opt = list( pts = F ), lwd = 2, lty = 2 )
+quantile_points( rt, ch, sel = 0, grp = grp, pch = 24, bg = 'white', cex = 1.2 )
 }
 

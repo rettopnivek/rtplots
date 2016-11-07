@@ -2,9 +2,9 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{cdf_curve}
 \alias{cdf_curve}
-\title{Joint CDF curves for response time and choice data.}
+\title{CDF curves for response time and choice data.}
 \usage{
-cdf_curve(rt, ch, sel = 1, grp = NULL, plt = NULL, opt = c(T, T, F))
+cdf_curve(rt, ch, sel = 1, grp = NULL, opt = list(), ...)
 }
 \arguments{
 \item{rt}{vector of response times.}
@@ -16,31 +16,36 @@ drawn. If 1, the CDF for responses times when choice = 1 is drawn.}
 
 \item{grp}{an optional vector with a grouping factor (e.g. subjects).}
 
-\item{plt}{a named list that allows specification of graphical
-parameters. The named list plt$ln can be used to set the graphical
-elements (e.g.. the options \code{lwd} and \code{lty}) for the
-drawn line. The named lists plt$pt1 and plt$pt2 can be used to
-set the graphical elements (e.g. the option \code{pch}) for the
-points denoting the median and mean.}
+\item{opt}{a list of named options:
+\describe{
+  \item{\code{jnt}}{If true, the joint distribution is used.}
+  \item{\code{draw}}{If true, the curve is drawn.}
+  \item{\code{out}}{If true, output is returned.}
+  \item{\code{flip}}{If true, the curve is flipped about the
+    x-axis.}
+}}
 
-\item{opt}{logical vector; indicates if 1) the joint distribution
-should be used, 2) the line should be drawn, and 3) if output
-should be returned.}
+\item{...}{additional plotting parameters.}
 }
 \value{
-A list consisting of...
+A list consisting of ...
 \describe{
-  \item{\code{CDF}}{a matrix with the estimated cumulative
-    probabilities and the corresonding resopnse times.}
-  \item{\code{Median}}{the response time and cumulative
-    probability for the median}
-  \item{\code{Mean}}{the response time and cumulative
-    probability for the mean}
+  \item{\code{pv}}{a data frame with the plotting values
+    used for the x-axis and the y-axis.}
+  \item{\code{g}}{when a grouping factor is present, a list
+    with the matrix of y-axis values per level, the vector
+    of associated response times, and the total number of
+    observations per each included level.}
+  \item{\code{v}}{a list of additional variables, the total
+    number of observations for all levels, the choice proportion
+    for each level, and the choice selection.}
+  \item{\code{i}}{a list of the input variables.}
+  \item{\code{opt}}{a list of the options used.}
   }
 }
 \description{
-Draws a line for the estimated joint CDF of a set response
-times and choices on an already existing plot.
+Draws a line for the empirical CDF of a set of response
+times (conditioned on choice) on an already existing plot.
 }
 \examples{
 # Load in example dataset
@@ -52,15 +57,12 @@ sel = d$Condition == 4 & d$Subject == 1
 rt = d$RT[sel]; ch = d$Accuracy[sel]
 blankRTplot()
 cdf_curve( rt, ch )
-plt = list( ln = list( lty = 2 ) )
-cdf_curve( rt, ch, sel = 0, plt = plt )
+cdf_curve( rt, ch, sel = 0, lty = 2 )
 # Aggregating over multiple subjects
-sel = d$Condition == 4
+sel = d$Condition == 0 # Not all subjects had responses for each choice
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
 blankRTplot( bty = 'l', ver = 'CDF', cex.axis = 1.5, cex.lab = 1.5 )
-plt = list( ln = list( lwd = 2 ), pt1 = list( bg = 'grey' ) )
-cdf_curve( rt, ch, grp = grp, plt = plt )
-plt = list( ln = list( lty = 2, lwd = 2 ), pt1 = list( bg = 'grey' ) )
-cdf_curve( rt, ch, sel = 0, grp = grp, plt = plt )
+cdf_curve( rt, ch, grp = grp, lwd = 2 )
+cdf_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 }
 

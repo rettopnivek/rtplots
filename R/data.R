@@ -1,0 +1,52 @@
+#' Response time and choice data from a priming task.
+#'
+#' A dataset containing response times and choice data for
+#' 25 subjects who completed a word identification task with
+#' immediate word priming. Subjects completed both a
+#' two-alternative forced-choice task and a same-different
+#' task, alternating between tasks every  80 blocks. Response
+#' times faster than 200 ms and slower than 4 seconds have been
+#' trimmed.
+#'
+#' @format A data frame with 31879 rows and 5 variables:
+#' \describe{
+#'   \item{Subject}{The index number for the 25 subjects.}
+#'   \item{Accuracy}{An incorrect response is 0, a correct
+#'     response is 1.}
+#'   \item{Choice}{Coded as 0 if the subject picked left/same
+#'     and coded 1 if the subject picked right/different.}
+#'   \item{RT}{The duration from the time at which the on-screen
+#'     choice alternatives were displayed and a subject's choice,
+#'     in seconds.}
+#'   \item{Condition}{The index number for the current condition
+#'     (see notes).}
+#'   }
+#' @note
+#' The conditions of the experiment are provided in the following
+#' table. The first column gives the index number. The second
+#' column indicates the type of task, where 2AFC refers to the
+#' two-alternative forced-choice task, and SD refers to the
+#' same-different task. Column three reports whether the target
+#' word or a foil word was primed. Column four indicates the
+#' duration in ms for the prime word. Column five indicates the
+#' type of correct response where L denotes left, R denotes right,
+#' S denotes same, and D denotes different.
+#' \tabular{rcccl}{
+#'  0  \tab 2AFC \tab Target \tab 50  \tab L\cr
+#'  1  \tab      \tab        \tab     \tab R\cr
+#'  2  \tab      \tab        \tab 400 \tab L\cr
+#'  3  \tab      \tab        \tab     \tab R\cr
+#'  4  \tab      \tab Foil   \tab 50  \tab L\cr
+#'  5  \tab      \tab        \tab     \tab R\cr
+#'  6  \tab      \tab        \tab 400 \tab L\cr
+#'  7  \tab      \tab        \tab     \tab R\cr
+#'  8  \tab SD   \tab Target \tab 50  \tab S\cr
+#'  9  \tab      \tab        \tab     \tab D\cr
+#'  10 \tab      \tab        \tab 400 \tab S\cr
+#'  11 \tab      \tab        \tab     \tab D\cr
+#'  12 \tab      \tab Foil   \tab 50  \tab S\cr
+#'  13 \tab      \tab        \tab     \tab D\cr
+#'  14 \tab      \tab        \tab 400 \tab S\cr
+#'  15 \tab      \tab        \tab     \tab D
+#' }
+"priming_data"

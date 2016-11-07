@@ -12,15 +12,23 @@ blankRTplot(xDim = c(0, 2), yDim = c(0, 1), ver = "CDF", unit = "s",
 
 \item{yDim}{the minimum and maximum y-axis values.}
 
-\item{ver}{the type of plot to draw (e.g. 'CDF', 'PDF',
-'QPE', or 'CAF').}
+\item{ver}{the type of plot to draw (i.e. 'CDF', 'PDF',
+'HF', 'CAF', or 'blank' ).}
 
 \item{unit}{the unit for the response times (e.g. 'ms' or 's').}
+
+\item{...}{additional plotting parameters.}
 }
 \value{
 A blank response time plot.
 }
 \description{
 Creates a blank response time plot with standard labels.
+}
+\examples{
+layout( rbind( 1:3, 4:6 ) )
+blankRTplot(); blankRTplot(ver='PDF');
+blankRTplot(ver='CAF'); blankRTplot(ver='HF');
+blankRTplot(ver='blank')
 }
 

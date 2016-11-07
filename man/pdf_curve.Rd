@@ -2,9 +2,9 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{pdf_curve}
 \alias{pdf_curve}
-\title{Joint PDF curves for response time and choice data.}
+\title{PDF curves for response time and choice data.}
 \usage{
-pdf_curve(rt, ch, sel = 1, grp = NULL, plt = NULL, opt = c(T, T, F))
+pdf_curve(rt, ch, sel = 1, grp = NULL, opt = list(), ...)
 }
 \arguments{
 \item{rt}{vector of response times.}
@@ -16,52 +16,55 @@ drawn. If 1, the PDF for responses times when choice = 1 is drawn.}
 
 \item{grp}{an optional vector with a grouping factor (e.g. subjects).}
 
-\item{plt}{a named list that allows specification of graphical
-parameters. The named list plt$ln can be used to set the graphical
-elements (e.g.. the options \code{lwd} and \code{lty}) for the
-drawn line. The named lists plt$pt1 and plt$pt2 can be used to
-set the graphical elements (e.g. the option \code{pch}) for the
-points denoting the median and mean.}
+\item{opt}{a list of named options:
+\describe{
+  \item{\code{jnt}}{If true, the joint distribution is used.}
+  \item{\code{draw}}{If true, the curve is drawn.}
+  \item{\code{out}}{If true, output is returned.}
+  \item{\code{flip}}{If true, the curve is flipped about the
+    x-axis.}
+}}
 
-\item{opt}{logical vector; indicates if 1) the joint distribution
-should be used, 2) the line should be drawn, and 3) if output
-should be returned.}
+\item{...}{additional plotting parameters.}
 }
 \value{
 A list consisting of...
 \describe{
-  \item{\code{PDF}}{a matrix with the estimated density}
-  \item{\code{Mode}}{the response time and likelihood for the mode}
-  \item{\code{Mean}}{the response time and likelihood for the mean}
+  \item{\code{pv}}{a data frame with the plotting values
+    used for the x-axis and the y-axis.}
+  \item{\code{g}}{when a grouping factor is present, a list
+    with the matrix of y-axis values per level, the vector
+    of associated response times, and the total number of
+    observations per each included level}
+  \item{\code{v}}{a list of additional variables, the total
+    number of observations for all levels, the choice proportion
+    for each level, the choice selection, and when there
+    is no grouping factor, the response times and their
+    associated estimated density.}
+  \item{\code{i}}{a list of the input variables.}
+  \item{\code{opt}}{a list of the options used.}
   }
 }
 \description{
-Draws a line for the estimated joint PDF of a set response
-times and choices on an already existing plot.
+Draws a line for the estimated PDF of a set response
+times (conditioned on choice) on an already existing plot.
 }
 \examples{
-# Load in example data
-data(priming_data)
+# Load in example dataset
+data("priming_data")
 d = priming_data
 layout( cbind(1,2) )
 # Single subject
-sel = d$Condition == 5 & d$Subject == 16
+sel = d$Condition == 4 & d$Subject == 1
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot(yDim=c(0,3),ver='PDF')
+blankRTplot( yDim = c(0,4), ver='PDF' )
 pdf_curve( rt, ch )
-plt = list( ln = list( col = 'blue' ) )
-pdf_curve( rt, ch, sel = 0, plt = plt )
+pdf_curve( rt, ch, sel = 0, lty = 2 )
 # Aggregating over multiple subjects
-sel = d$Condition == 5
+sel = d$Condition == 0 # Not all subjects had responses for each choice
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( yDim = c(0,2), bty = 'l', ver = 'CDF', cex.axis = 1.5,
-  cex.lab = 1.5 )
-plt = list( ln = list( lwd = 2 ), pt1 = list( bg = 'grey', cex = 1.5 ),
-  pt2 = list( type = 'n' ) )
-pdf_curve( rt, ch, grp = grp, plt = plt )
-plt = list( ln = list( lty = 2, lwd = 2 ),
-  pt1 = list( pch = 15, cex = 1.5 ),
-  pt2 = list( type = 'n' ) )
-pdf_curve( rt, ch, sel = 0, grp = grp, plt = plt )
+blankRTplot( bty = 'l', ver = 'PDF', yDim = c(0,4), cex.axis = 1.5, cex.lab = 1.5 )
+pdf_curve( rt, ch, grp = grp, lwd = 2 )
+pdf_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 }
 

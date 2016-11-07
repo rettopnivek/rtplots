@@ -2,31 +2,78 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{hazard_curve}
 \alias{hazard_curve}
-\title{Estimated hazard function for response time and choice data.}
+\title{Estimated the hazard function for response time and choice data.}
 \usage{
-hazard_curve(rt, ch, sel = 1, opt = c(T, T, F), ...)
+hazard_curve(rt, ch, sel = 1, prb = seq(0.05, 0.95, 0.1), j = 25,
+  grp = NULL, opt = list(), ...)
 }
 \arguments{
 \item{rt}{vector of response times.}
 
 \item{ch}{a vector of binary choices (i.e. 0 or 1).}
 
-\item{sel}{If 0, the PDF for responses times when choice = 0 is
-drawn. If 1, the PDF for responses times when choice = 1 is drawn.}
+\item{sel}{If 0, the hazard function for responses times when choice = 0 is
+drawn. If 1, the hazard function for responses times when choice = 1 is
+drawn.}
 
-\item{opt}{logical vector; indicates if 1) the joint distribution
-should be used, 2) the line should be drawn, and 3) if output
-should be returned.}
+\item{prb}{the sequence of cumulative probabilities used to define
+the intervals.}
+
+\item{j}{a parameter controlling the degree of smoothing.}
+
+\item{opt}{a list of named options:
+\describe{
+  \item{\code{jnt}}{If true, the joint distribution is used.}
+  \item{\code{draw}}{If true, the curve is drawn.}
+  \item{\code{out}}{If true, output is returned.}
+  \item{\code{flip}}{If true, the curve is flipped about the
+    x-axis.}
+}}
 
 \item{...}{additional plotting parameters.}
 }
 \value{
-A matrix giving the selected response times, density
-  estimates, cumulative probabilities, and the estimated hazard
-  function.
+A list consisting of ...
+\describe{
+  \item{\code{pv}}{a data frame with the plotting values
+    used for the x-axis and the y-axis.}
+  \item{\code{g}}{when a grouping factor is present, a list
+    with the matrix of y-axis values per level and the matrix
+    of quantiles for each level.}
+  \item{\code{v}}{a list of additional variables, the total
+    number of observations for all levels, the choice proportion
+    for each level, the choice selection, the smoothing
+    parameter j, and the cumulative probabilities used to
+    define the intervals.}
+  \item{\code{i}}{a list of the input variables.}
+  \item{\code{opt}}{a list of the options used.}
+  }
 }
 \description{
-Draws a line for the estimated joint PDF of a set response
-times and choices on an already existing plot.
+Draws a smoothed estimate of the hazard function for a set of
+response times (conditioned on choice) using an algorithm
+recommended by Luce (1986, see equations 4.1 and 4.2).
+}
+\examples{
+#' # Load in example dataset
+data("priming_data")
+d = priming_data
+layout( cbind(1,2) )
+# Single subject
+sel = d$Condition == 4 & d$Subject == 1
+rt = d$RT[sel]; ch = d$Accuracy[sel]
+blankRTplot( yDim = c(0,5), ver='HF' )
+hazard_curve( rt, ch )
+hazard_curve( rt, ch, sel = 0, lty = 2 )
+# Aggregating over multiple subjects
+sel = d$Condition == 4
+rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
+blankRTplot( bty = 'l', ver = 'HF', yDim = c(0,5), cex.axis = 1.5, cex.lab = 1.5 )
+hazard_curve( rt, ch, grp = grp, lwd = 2 )
+hazard_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
+}
+\references{
+Luce, R. D. (1986). Response Times: Their Role in Inferring
+  Elementary Mental Organization. New York: Oxford University Press.
 }
 
