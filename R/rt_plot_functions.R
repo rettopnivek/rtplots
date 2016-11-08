@@ -9,7 +9,7 @@
 # Lookup - 02:  pdf_curve
 # Lookup - 03:  hazard_curve
 # Lookup - 04:  quantile_points
-# Lookup - 05:  CAF_points
+# Lookup - 05:  caf_points
 # Lookup - 06:  add_points
 # Lookup - 07:  add_points
 # Lookup - 08:  blankRTplot
@@ -797,7 +797,7 @@ caf_points = function( rt, ch, prb = seq( .1, .9, .2 ),
 
     output = list( pv = cbind( x = q, y = ca ),
                    g = NULL,
-                   v = list( sel = sel ),
+                   v = list( prb = prb ),
                    i = list( rt = rt, ch = ch ),
                    opt = optOut )
 
@@ -824,7 +824,7 @@ caf_points = function( rt, ch, prb = seq( .1, .9, .2 ),
 
     output = list( pv = cbind( x = q, y = ca ),
                    g = list( w = allCAF, x = allQ$Q ),
-                   v = list(sel = sel),
+                   v = list( prb = prb ),
                    i = list( rt = rt, ch = ch, grp = grp ),
                    opt = optOut )
 
