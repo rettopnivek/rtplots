@@ -2,7 +2,7 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{cdf_curve}
 \alias{cdf_curve}
-\title{CDF curves for response time and choice data.}
+\title{CDF curves for response time and choice data}
 \usage{
 cdf_curve(rt, ch, sel = 1, grp = NULL, opt = list(), ...)
 }

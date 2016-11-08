@@ -2,7 +2,7 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{hazard_curve}
 \alias{hazard_curve}
-\title{Estimated the hazard function for response time and choice data.}
+\title{Estimated the hazard function for response time and choice data}
 \usage{
 hazard_curve(rt, ch, sel = 1, prb = seq(0.05, 0.95, 0.1), j = 25,
   grp = NULL, opt = list(), ...)

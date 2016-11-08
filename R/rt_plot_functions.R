@@ -11,11 +11,13 @@
 # Lookup - 04:  quantile_points
 # Lookup - 05:  CAF_points
 # Lookup - 06:  add_points
-# Lookup - 07:  blankRTplot
+# Lookup - 07:  add_points
+# Lookup - 08:  blankRTplot
 
 ### TO DO ###
 # Add accuracy-latency plots
 # Add helper functions for plotting variability (e.g. SEs)
+# Adjust output for 'add_' functions
 # Check man pages for errors
 # Add references (base R density function?)
 # Write script testing the functions
@@ -25,7 +27,7 @@
 # library(roxygen2)
 
 # Lookup - 01
-#' CDF curves for response time and choice data.
+#' CDF curves for response time and choice data
 #'
 #' Draws a line for the empirical CDF of a set of response
 #' times (conditioned on choice) on an already existing plot.
@@ -191,7 +193,7 @@ cdf_curve = function( rt, ch, sel = 1, grp = NULL,
 }
 
 # Lookup - 02
-#' PDF curves for response time and choice data.
+#' PDF curves for response time and choice data
 #'
 #' Draws a line for the estimated PDF of a set response
 #' times (conditioned on choice) on an already existing plot.
@@ -374,7 +376,7 @@ pdf_curve = function( rt, ch, sel = 1, grp = NULL,
 }
 
 # Lookup - 03
-#' Estimated the hazard function for response time and choice data.
+#' Estimated the hazard function for response time and choice data
 #'
 #' Draws a smoothed estimate of the hazard function for a set of
 #' response times (conditioned on choice) using an algorithm
@@ -840,7 +842,7 @@ caf_points = function( rt, ch, prb = seq( .1, .9, .2 ),
 }
 
 # Lookup - 06
-#' Add additional points.
+#' Add additional points
 #'
 #' Adds additional points to an existing plot, drawing a given
 #' test statistic for response times conditioned on choice using
@@ -952,8 +954,123 @@ add_points = function( output, T_x = mean, out = F, ... ) {
   if (out) return( new_output )
 }
 
-
 # Lookup - 07
+#' Add additional line segments
+#'
+#' Adds additional vertical line segments to an existing plot,
+#' based on a given test statistic for response times conditioned
+#' on choice using output from a curve function.
+#'
+#' @param output the list output from \code{cdf_curve},
+#'   \code{pdf_curve}, or \code{hazard_curve}.
+#' @param T_x a function to calculate a text statistic over
+#'   a vector (e.g. mean, median, etc.).
+#' @param out A logical value, indicating if output should be returned.
+#' @param ...  additional plotting parameters.
+#' @return A list consisting of the x and y-axis plotting points.
+#' @examples
+#' # Load in example dataset
+#' data("priming_data")
+#' d = priming_data
+#' layout( cbind(1,2) )
+#' # Single subject
+#' sel = d$Condition == 15 & d$Subject == 1
+#' rt = d$RT[sel]; ch = d$Accuracy[sel]
+#' blankRTplot()
+#' out = cdf_curve( rt, ch, opt = list( out = T ) )
+#' add_segments( out, col = 'blue' )
+#' add_segments( out, T_x = median, col = 'red' )
+#' legend( 'topleft', c('Mean','Median'), fill = c('blue','red'), bty = 'n' )
+#' # Aggregating over multiple subjects
+#' sel = d$Condition == 15
+#' rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
+#' blankRTplot()
+#' out = cdf_curve( rt, ch, opt = list( out = T ) )
+#' T_x = function(x) quantile(x,prob=seq(.1,.9,.1))
+#' add_points( out, T_x = T_x, col = 'grey' )
+#' @export
+
+add_segments = function( output, T_x = mean, out = F, ... ) {
+
+  # Extract choice to condition on
+  sel = output$v$sel
+  # Extract input
+  rt = output$i$rt; ch = output$i$ch
+  # Extract options on whether to flip
+  flip = output$opt$flip
+
+  # Determine if there is a grouping variable
+  grp = output$i$grp
+
+  # No grouping factor
+  if ( length( grp ) == 0 ) {
+
+    # Condition on choice
+    x = rt[ ch == sel ]
+    # Calculate statistic
+    ts = T_x( x )
+
+  }
+  # Grouping factor
+  if ( length( grp ) == length( rt ) ) {
+
+    # Condition on choice
+    xAll = rt[ ch == sel ]
+    g = grp[ ch == sel ]
+
+    # Calculate statistic
+    tsAll = aggregate( xAll, list( g ), T_x )
+
+    # Collapse over group levels
+    if ( is.matrix( tsAll$x ) ) {
+      ts = colMeans( tsAll$x )
+    } else {
+      ts = mean( tsAll$x )
+    }
+
+  }
+
+  # Extract plotting values
+  xa = output$pv$x # x-axis
+  ya = output$pv$y # y-axis
+
+  # Function to calculate values for y-axis
+  # using linear interpolation
+  f = function( x ) {
+
+    ind = max( which( xa < x ) )
+    if ( ind == -Inf ) {
+      out = ya[1];
+    } else {
+
+      if ( ind == length(xa) ) {
+        out = ya[ length(xa) ]
+      } else {
+        pts = c( ind, ind + 1 )
+        out = lnInterp( x, ya[ pts ], xa[ pts ] )
+      }
+
+    }
+
+    return( out )
+  }
+
+  # Determine y-axis values
+  ny = sapply( ts, f )
+
+  # Save output
+  new_output = list( x = ts, y = ny )
+
+  # Add line segments
+  if (flip) segments( ts, rep( 0, length(ts) ),
+                      ts, -ny, ... ) else
+                        segments( ts, rep( 0, length(ts) ),
+                                  ts, ny, ... )
+
+  if (out) return( new_output )
+}
+
+# Lookup - 08
 #' Blank response time plot
 #'
 #' Creates a blank response time plot with standard labels.

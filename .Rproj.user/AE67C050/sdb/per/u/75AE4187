@@ -1,0 +1,18 @@
+{
+    "contents" : "add_uncertainty = function( output, f = NULL, alpha = .95,\n                            draw = T, ... ) {\n  \n  # Extract choice to condition on\n  sel = output$v$sel\n  # Extract input\n  rt = output$i$rt; ch = output$i$ch\n  # Extract options on whether to flip\n  flip = output$opt$flip\n  \n  # Determine if there is a grouping variable\n  grp = output$i$grp\n  \n  # If no function is provided, define a uncertainty interval \n  # based on the mean and t-distribution\n  if ( length( f ) == 0 ) {\n    \n    f = function(x,alpha) {\n      n = length(x)\n      se = sd(x)/sqrt( n )\n      crt = qt( (1-alpha)/2, 25-1, lower.tail = T )\n      ui = c( mean(x) - crt*se, mean(x) + crt*se )\n      ui[ ui < 0 ] = 0\n      \n      return(ui)\n    }\n    \n  }\n  \n  if ( length( grp ) == 0 ) stop('Need grouping factor')\n  \n  if ( !is.matrix( output$g$x ) ) {\n    ui = apply( out$g$w, 2, f, alpha = alpha )\n    x = output$g$x\n    \n    if (draw) {\n      \n      polygon( c(x,rev(x)),c(ui[1,],rev(ui[2,])), ... )\n      \n    }\n    \n  }\n  \n  if ( is.matrix( output$g$x ) ) {\n    \n  }\n  \n}\n\nd = priming_data\ncnd = d$Condition == 1\nrt = d$RT[ cnd ]; ch = d$Choice[ cnd ]; grp = d$Subject[ cnd ]\noutput = cdf_curve( rt, ch, grp = grp, opt = list( draw = F, out = T ) )\nx11(); blankRTplot()\nadd_uncertainty( output, border = NA, col = 'grey' )\nf = function(x,alpha) { \n  prb = c( (1-alpha)/2,alpha+(1-alpha)/2 );\n  quantile(x,prb)\n}\nadd_uncertainty( output, f = f )\ncdf_curve( rt, ch, grp = grp )\n\nlibrary( seqmodels )\n\ndist_curve = function( ch, prm, pdist_f, rt = NULL, t_lim = c(0,2,100), \n                       opt = list( ), ... ) {\n  \n  # Set options for joint distribution, drawing, output, and\n  # whether curve should be flipped around x-axis\n  if ( length( opt$draw ) == 0 ) draw = T else draw = opt$draw\n  if ( length( opt$out ) == 0 ) out = F else out = opt$out\n  if ( length( opt$flip ) == 0 ) flip = F else flip = opt$flip\n  # Save options\n  optOut = list( draw = draw, out = out, flip = flip )\n  \n  # If no RT data is provided\n  if ( length( rt ) == 0 ) {\n    # Create a sequence of times\n    t = seq( t_lim[1], t_lim[2], length = t_lim[3] )\n  } else t = sort( rt )\n  \n  p = pdist_f( t, ch, prm )\n  \n  if (draw) {\n    if (flip) lines( t, -p, ... ) else lines( t, p, ... )\n  }\n  \n}\n\npdwr_f = function( t, ch, prm ) {\n  \n  p = pwaldrace( t, ch, prm[1], prm[2], prm[3],\n             prm[4], prm[5], prm[6] )\n  \n  return( p )\n}\n\nx11()\nblankRTplot()\ndist_curve( 1, c(1,3,.3,1,1.5,.3), pdwr_f, col = 'blue' )\ndist_curve( 0, c(1,3,.3,1,1.5,.3), pdwr_f, col = 'blue', lty = 2 )\n\n",
+    "created" : 1478614752168.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "3595328483",
+    "id" : "75AE4187",
+    "lastKnownWriteTime" : 7011605692497750387,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "type" : "r_source"
+}

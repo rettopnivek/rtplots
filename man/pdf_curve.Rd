@@ -2,7 +2,7 @@
 % Please edit documentation in R/rt_plot_functions.R
 \name{pdf_curve}
 \alias{pdf_curve}
-\title{PDF curves for response time and choice data.}
+\title{PDF curves for response time and choice data}
 \usage{
 pdf_curve(rt, ch, sel = 1, grp = NULL, opt = list(), ...)
 }
