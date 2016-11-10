@@ -54,13 +54,13 @@ layout( cbind(1,2) )
 # Single subject
 sel = d$Condition == 12 & d$Subject == 7
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot( xDim = c(0,1), ver = 'CAF' )
+blankRTplot( tDim = c(.6,1.6), ver = 'CAF' )
 caf_points( rt, ch, opt = list( pts = F ) )
 caf_points( rt, ch, pch = 21, bg = 'white' )
 # Aggregating over multiple subjects
 sel = d$Condition == 12
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( xDim = c(0,1.2), ver = 'CAF', cex.axis = 1.5, cex.lab = 1.5 )
+blankRTplot( tDim = c(0,1.2), ver = 'CAF', cex.axis = 1.5, cex.lab = 1.5 )
 caf_points( rt, ch, grp = grp, opt = list( pts = F ), lwd = 2 )
 caf_points( rt, ch, grp = grp, pch = 21, bg = 'white', cex = 1.2 )
 }

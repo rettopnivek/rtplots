@@ -13,13 +13,14 @@
 # Lookup - 06:  add_points
 # Lookup - 07:  add_points
 # Lookup - 08:  blankRTplot
+# Lookup - 09:  pvt_points
+# Lookup - 10:  add_uncertainty
 
 ### TO DO ###
-# Add accuracy-latency plots
-# Add helper functions for plotting variability (e.g. SEs)
+# Add examples for pvt_points
+# Extend uncertainty intervals for pvt_points
 # Adjust output for 'add_' functions
 # Check man pages for errors
-# Add references (base R density function?)
 # Write script testing the functions
 
 # Useful functions for package creation
@@ -236,13 +237,13 @@ cdf_curve = function( rt, ch, sel = 1, grp = NULL,
 #' # Single subject
 #' sel = d$Condition == 4 & d$Subject == 1
 #' rt = d$RT[sel]; ch = d$Accuracy[sel]
-#' blankRTplot( yDim = c(0,4), ver='PDF' )
+#' blankRTplot( pDim = c(0,4), ver='PDF' )
 #' pdf_curve( rt, ch )
 #' pdf_curve( rt, ch, sel = 0, lty = 2 )
 #' # Aggregating over multiple subjects
 #' sel = d$Condition == 0 # Not all subjects had responses for each choice
 #' rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-#' blankRTplot( bty = 'l', ver = 'PDF', yDim = c(0,4), cex.axis = 1.5, cex.lab = 1.5 )
+#' blankRTplot( bty = 'l', ver = 'PDF', pDim = c(0,4), cex.axis = 1.5, cex.lab = 1.5 )
 #' pdf_curve( rt, ch, grp = grp, lwd = 2 )
 #' pdf_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 #' @export
@@ -425,13 +426,13 @@ pdf_curve = function( rt, ch, sel = 1, grp = NULL,
 #' # Single subject
 #' sel = d$Condition == 4 & d$Subject == 1
 #' rt = d$RT[sel]; ch = d$Accuracy[sel]
-#' blankRTplot( yDim = c(0,5), ver='HF' )
+#' blankRTplot( pDim = c(0,5), ver='HF' )
 #' hazard_curve( rt, ch )
 #' hazard_curve( rt, ch, sel = 0, lty = 2 )
 #' # Aggregating over multiple subjects
 #' sel = d$Condition == 4
 #' rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-#' blankRTplot( bty = 'l', ver = 'HF', yDim = c(0,5), cex.axis = 1.5, cex.lab = 1.5 )
+#' blankRTplot( bty = 'l', ver = 'HF', pDim = c(0,5), cex.axis = 1.5, cex.lab = 1.5 )
 #' hazard_curve( rt, ch, grp = grp, lwd = 2 )
 #' hazard_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 
@@ -625,7 +626,7 @@ hazard_curve = function( rt, ch, sel = 1, prb = seq(.05,.95,.1),
 #' # Single subject
 #' sel = d$Condition == 6 & d$Subject == 20
 #' rt = d$RT[sel]; ch = d$Accuracy[sel]
-#' blankRTplot( xDim = c(0,1) )
+#' blankRTplot( tDim = c(0,1) )
 #' quantile_points( rt, ch, opt = list( pts = F ) )
 #' quantile_points( rt, ch, pch = 21, bg = 'white' )
 #' quantile_points( rt, ch, sel = 0, opt = list( pts = F ), lty = 2 )
@@ -633,7 +634,7 @@ hazard_curve = function( rt, ch, sel = 1, prb = seq(.05,.95,.1),
 #' # Aggregating over multiple subjects
 #' sel = d$Condition == 6
 #' rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-#' blankRTplot( xDim = c(0,1), bty = 'l', cex.axis = 1.5, cex.lab = 1.5 )
+#' blankRTplot( tDim = c(0,1), bty = 'l', cex.axis = 1.5, cex.lab = 1.5 )
 #' quantile_points( rt, ch, grp = grp, opt = list( pts = F ), lwd = 2 )
 #' quantile_points( rt, ch, grp = grp, pch = 21, bg = 'white', cex = 1.2 )
 #' quantile_points( rt, ch, sel = 0, grp = grp, opt = list( pts = F ), lwd = 2, lty = 2 )
@@ -764,13 +765,13 @@ quantile_points = function( rt, ch, sel = 1,
 #' # Single subject
 #' sel = d$Condition == 12 & d$Subject == 7
 #' rt = d$RT[sel]; ch = d$Accuracy[sel]
-#' blankRTplot( xDim = c(0,1), ver = 'CAF' )
+#' blankRTplot( tDim = c(.6,1.6), ver = 'CAF' )
 #' caf_points( rt, ch, opt = list( pts = F ) )
 #' caf_points( rt, ch, pch = 21, bg = 'white' )
 #' # Aggregating over multiple subjects
 #' sel = d$Condition == 12
 #' rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-#' blankRTplot( xDim = c(0,1.2), ver = 'CAF', cex.axis = 1.5, cex.lab = 1.5 )
+#' blankRTplot( tDim = c(0,1.2), ver = 'CAF', cex.axis = 1.5, cex.lab = 1.5 )
 #' caf_points( rt, ch, grp = grp, opt = list( pts = F ), lwd = 2 )
 #' caf_points( rt, ch, grp = grp, pch = 21, bg = 'white', cex = 1.2 )
 #' @export
@@ -1075,10 +1076,11 @@ add_segments = function( output, T_x = mean, out = F, ... ) {
 #'
 #' Creates a blank response time plot with standard labels.
 #'
-#' @param xDim the minimum and maximum x-axis values.
-#' @param yDim the minimum and maximum y-axis values.
+#' @param tDim the minimum and maximum for the time axis.
+#' @param pDim the minimum and maximum for the choice/accuracy/probability
+#'   axis.
 #' @param ver the type of plot to draw (i.e. 'CDF', 'PDF',
-#'   'HF', 'CAF', or 'blank' ).
+#'   'HF', 'CAF', 'PvT', or 'blank' ).
 #' @param unit the unit for the response times (e.g. 'ms' or 's').
 #' @param ... additional plotting parameters.
 #' @return A blank response time plot.
@@ -1086,21 +1088,355 @@ add_segments = function( output, T_x = mean, out = F, ... ) {
 #' layout( rbind( 1:3, 4:6 ) )
 #' blankRTplot(); blankRTplot(ver='PDF');
 #' blankRTplot(ver='CAF'); blankRTplot(ver='HF');
-#' blankRTplot(ver='blank')
+#' blankRTplot(ver='PvT'); blankRTplot(ver='blank')
 #' @export
 
-blankRTplot = function( xDim = c(0,2), yDim = c(0,1),
+blankRTplot = function( tDim = c(0,2), pDim = c(0,1),
                         ver = 'CDF', unit = 's', ... ) {
 
   # Define label for x-axis
-  xl = paste( 'RT (', unit, ')', sep = '' )
+  tl = paste( 'RT (', unit, ')', sep = '' )
 
-  if ( ver == 'CDF' | ver == 'QPE' ) yl = 'Cumulative probability'
-  if ( ver == 'PDF' ) yl = 'Density'
-  if ( ver == 'CAF' ) yl = 'Conditional accuracy'
-  if ( ver == 'HF' ) yl = 'Hazard function'
-  if ( ver == 'blank' ) { xl = ' '; yl = ' ' }
+  if ( ver == 'PvT' ) {
+    pl = 'P(Y = 1)'
+    plot( pDim, tDim, type = 'n', ylab = tl, xlab = pl, ... )
+    return()
+  }
 
-  plot( xDim, yDim, type = 'n', ylab = yl, xlab = xl, ... )
+  if ( ver == 'CDF' | ver == 'QPE' ) pl = 'Cumulative probability'
+  if ( ver == 'PDF' ) pl = 'Density'
+  if ( ver == 'CAF' ) pl = 'P( Y = 1 | Q(t) )'
+  if ( ver == 'HF' ) pl = 'Hazard function'
+  if ( ver == 'blank' ) { tl = ' '; pl = ' ' }
 
+  plot( tDim, pDim, type = 'n', ylab = pl, xlab = tl, ... )
+
+}
+
+
+# Lookup - 09
+#' Add points to a P(Y=1) by T(x) plot
+#'
+#' Adds a set of points for a test statistic for response times
+#' calculated over the levels of a covariate against the
+#' probability of picking a '1' response.
+#'
+#' @param rt vector of response times.
+#' @param ch a vector of binary choices (i.e. 0 or 1).
+#' @param grp an optional vector with a grouping factor (e.g. subjects).
+#' @param T_x a function to calculate a text statistic over
+#'   a vector (e.g. mean, median, etc.).
+#' @param plt an optional list giving values for the \code{pch},
+#'   \code{col}, and \code{bg} plotting parameters.
+#' @param opt a list of named options:
+#'   \describe{
+#'     \item{\code{draw}}{If true, the intervals are drawn.}
+#'     \item{\code{out}}{If true, output is returned.}
+#'   }
+#' @param ...  additional plotting parameters.
+#' @return A list consisting of ...
+#' \describe{
+#'   \item{\code{pv}}{a list with the plotting values used for
+#'     the x-axis and the y-axis.}
+#'   \item{\code{g}}{when a grouping factor is present, a list
+#'     with the data-frame for the y-axis values and the x-axis
+#'     values by group and covariate level.}
+#'   \item{\code{i}}{a list of the input variables.}
+#'   \item{\code{opt}}{a list of the options used.}
+#'   }
+#' @export
+
+pvt_points = function( rt, ch, cvrts, grp = NULL, T_x = mean,
+                       plt = list( ), opt = list( ),
+                       ... ) {
+
+  # Set options for drawing and output
+  if ( length( opt$draw ) == 0 ) draw = T else draw = opt$draw
+  if ( length( opt$out ) == 0 ) out = F else out = opt$out
+  # Save options
+  optOut = list( draw = draw, out = out )
+
+  # If there is no grouping factor
+  if ( length( grp ) == 0 ) {
+
+    # Apply the test statistic to response times
+    # over the covariate levels
+    yv = aggregate( rt, list( cvrts ), T_x )
+    colnames( yv ) = c('Cv','T_x')
+
+    # Calculate the proportion of Y == ch over the
+    # covariate levels
+    xv = aggregate( ch, list( cvrts ), mean )
+    colnames( xv ) = c('Cv','P')
+
+    # Determine the dimensions of the test statistic
+    dmn = dim( yv$T_x )
+
+    plt = pvt_plot_options(plt,dmn,xv)
+
+    if (draw) {
+
+      if ( length( dmn ) > 0 ) {
+        # If the y-axis values are in a matrix
+
+        # Plot the points for each level
+        for (i in 1:dmn[1]) {
+          points( rep( xv$P[i], dmn[2] ),
+                  yv$T_x[i,], pch = plt$pch[i,],
+                  col = plt$col[i,],
+                  bg = plt$bg[i,], ... )
+        }
+
+      } else {
+        # If the y-axis values are in a vector
+
+        # Plot the point for each level
+        points( xv$P, yv$T_x, pch = plt$pch,
+                col = plt$col, bg = plt$bg, ... )
+      }
+
+    }
+
+    output = list(
+      pv = list( x = xv$P, y = yv$T_x ),
+      g = NULL,
+      i = list( rt = rt, ch = ch, cvrts = cvrts ),
+      opt = optOut
+    )
+  }
+
+  # If there is a grouping factor
+  if ( length( grp ) == length( rt ) ) {
+
+    # Apply the test statistic to response times
+    # over the covariate and grouping levels
+    yvAll = aggregate( rt, list( cvrts, grp ), T_x )
+    colnames( yvAll ) = c('Cv','G','T_x')
+
+    # Calculate the proportion of Y == ch over the
+    # covariate and grouping levels
+    xvAll = aggregate( ch, list( cvrts, grp ), mean )
+    colnames( xvAll ) = c('Cv','G','P')
+
+    # Aggregate over the grouping factor
+    yv = aggregate( yvAll$T_x, list( yvAll$Cv ), mean )
+    if ( dim( yv )[2] == 2 ) colnames( yv ) = c('Cv','T_x')
+    if ( dim( yv )[2] > 2 ) {
+      tmp = as.matrix( yv[,-1] )
+      yv = list( Cv = yv[,1], T_x = tmp )
+    }
+    xv = aggregate( xvAll$P, list( xvAll$Cv ), mean )
+    colnames( xv ) = c('Cv','P' )
+
+    # Determine the dimensions of the test statistic
+    dmn = dim( yv$T_x )
+
+    plt = pvt_plot_options(plt,dmn,xv)
+
+    if ( draw ) {
+
+      if ( length( dmn ) > 0 ) {
+        # If the y-axis values are in a matrix
+
+        # Plot the points for each level
+        for (i in 1:dmn[1]) {
+          points( rep( xv$P[i], dmn[2] ),
+                  yv$T_x[i,], pch = plt$pch[i,],
+                  col = plt$col[i,],
+                  bg = plt$bg[i,], ... )
+        }
+
+      } else {
+        # If the y-axis values are in a vector
+
+        # Plot the point for each level
+        points( xv$P, yv$T_x, pch = plt$pch,
+                col = plt$col, bg = plt$bg, ... )
+      }
+
+    }
+
+    output = list(
+      pv = list( x = xv$P, y = yv$T_x ),
+      g = list( w = yvAll, x = xvAll ),
+      i = list( rt = rt, ch = ch, cvrts = cvrts, grp = grp ),
+      opt = optOut
+    )
+
+  }
+
+  if (out) return( output )
+}
+
+# Lookup - 10
+#' Add uncertainty intervals to plot
+#'
+#' Adds uncertainty intervals (e.g. the mean +/- 1.96 standard errors)
+#' to a plot using output from other functions that were applied with
+#' a grouping factor.
+#'
+#' @param output the list output from functions like \code{cdf_curve}
+#'   or \code{quantile_points}.
+#' @param f an optional function to calculate the lower and upper boundaries
+#'   of an uncertainty interval given a coverage interval.
+#' @param alpha the desired coverage interval for the uncertainty interval.
+#' @param opt a list of named options:
+#'   \describe{
+#'     \item{\code{draw}}{If true, the intervals are drawn.}
+#'     \item{\code{out}}{If true, output is returned.}
+#'   }
+#' @param ...  additional plotting parameters.
+#' @return A list consisting of...
+#' \describe{
+#'   \item{\code{pv}}{a data frame with the plotting values
+#'     used for the x-axis and the y-axis.}
+#'   \item{\code{ui}}{a list giving the uncertainty intervals}
+#'   \item{\code{opt}}{a list of the options used.}
+#'   }
+#' @examples
+#' # Load in example dataset
+#' data("priming_data")
+#' d = priming_data
+#' layout( cbind(1,2) )
+#' # Select condition
+#' cnd = d$Condition == 3
+#' rt = d$RT[cnd]; ch = d$Accuracy[cnd]; grp = d$Subject[cnd]
+#' # For curve functions
+#' blankRTplot()
+#' out = cdf_curve( rt, ch, grp = grp, opt = list( out = T, draw = F ) )
+#' add_uncertainty( out, border = NA, col = 'grey' )
+#' cdf_curve( rt, ch, grp = grp ) # Now draw the curve
+#' # For point functions (with new type of uncertainty interval)
+#' f = function(x,alpha) {
+#'   prb = c( (1-alpha)/2,alpha+(1-alpha)/2 );
+#'   quantile(x,prb)
+#' }
+#' blankRTplot()
+#' out = quantile_points( rt, ch, grp = grp, opt = list( draw = F, out = T ) )
+#' add_uncertainty( out, f = f, alpha = .5 )
+#' quantile_points( rt, ch, grp = grp, pch = 21, bg = 'grey' )
+#' @export
+
+add_uncertainty = function( output, f = NULL, alpha = .95,
+                             opt = list( ), ... ) {
+
+  # Set options for drawing and output
+  if ( length( opt$draw ) == 0 ) draw = T else draw = opt$draw
+  if ( length( opt$out ) == 0 ) out = F else out = opt$out
+  # Save options
+  optOut = list( draw = draw, out = out )
+
+  # Extract choice to condition on
+  sel = output$v$sel
+  # Extract input
+  rt = output$i$rt; ch = output$i$ch
+  # Extract options on whether to flip
+  flip = output$opt$flip
+
+  # Determine if there is a grouping variable
+  grp = output$i$grp
+
+  # If no function is provided, define a uncertainty interval
+  # based on the mean and t-distribution
+  if ( length( f ) == 0 ) {
+
+    f = function(x,alpha) {
+      n = length(x)
+      se = sd(x)/sqrt( n )
+      crt = abs( qt( (1-alpha)/2, n - 1, lower.tail = T ) )
+      ui = c( mean(x) - crt*se, mean(x) + crt*se )
+      ui[ ui < 0 ] = 0
+
+      return(ui)
+    }
+
+  }
+
+  if ( length( grp ) == 0 ) stop('Need grouping factor')
+
+  # For 'pvt_point' functions
+  if ( is.data.frame( output$g$w ) ) {
+
+    yvAll = output$g$w
+    xvAll = output$g$x
+
+    yv = aggregate(yvAll$T_x,list(yvAll$Cv),f,alpha=.95)
+    xv = aggregate(xvAll$P,list(xvAll$Cv),f,alpha=.95)
+    dmn = dim( yv )
+    if (draw) {
+
+      for ( i in 2:dmn[2] ) {
+        for ( j in 1:dmn[1] ) {
+
+          addEllipse( diff( xv[[2]][j,] ),
+                      diff( yv[[i]][j,] ),
+                      output$pv$x[j],
+                      output$pv$y[j,i-1], ... )
+        }
+      }
+
+    }
+
+    # Save output
+    newOutput = list(
+      pv = cbind( x = xv$x, y = yv[,2:dmn[2]] ),
+      ui = list( x = xv, y = yv ),
+      opt = opt )
+
+    if (out) return( newOutput ) else return()
+  }
+
+  # For curve functions
+  if ( !is.matrix( output$g$x ) ) {
+
+    # Calculate uncertainty interval for y-axis values
+    ui = apply( output$g$w, 2, f, alpha = alpha )
+    x = output$g$x
+
+    # Plot uncertainty interval
+    xa = c( x, rev(x) )
+    ya = c( ui[1,], rev( ui[2,] ) )
+    if (flip) ya = -ya
+
+    if (draw) {
+
+      polygon( xa, ya, ... )
+
+    }
+
+    # Save output
+    newOutput = list(
+      pv = cbind( x = xa, y = ya ),
+      ui = list( y = ui ),
+      opt = opt )
+
+  }
+
+  # For point functions
+  if ( is.matrix( output$g$x ) ) {
+
+    # Extract centering info
+    xc = output$pv[,'x']
+    yc = output$pv[,'y']
+    # Compute uncertainty variables for both x and y-axis
+    ya = apply( output$g$w, 2, f, alpha = alpha )
+    xa = apply( output$g$x, 2, f, alpha = alpha )
+
+    # Plot intervals
+    if ( draw ) {
+      segments( xa[1,], yc, xa[2,], yc, ... )
+      segments( xc, ya[1,], xc, ya[2,], ... )
+    }
+
+    # Save output
+    newOutput = list(
+      pv = cbind( x1 = xa[1,], x2 = xa[2,],
+                  y1 = ya[1,], y2 = ya[2,],
+                  xc = xc, yc = yc ),
+      ui = list( x = xa, y = ya ),
+      opt = opt )
+
+  }
+
+  if (out ) return( newOutput )
 }

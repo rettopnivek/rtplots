@@ -2,9 +2,11 @@
 
 export(add_points)
 export(add_segments)
+export(add_uncertainty)
 export(blankRTplot)
 export(caf_points)
 export(cdf_curve)
 export(hazard_curve)
 export(pdf_curve)
+export(pvt_points)
 export(quantile_points)

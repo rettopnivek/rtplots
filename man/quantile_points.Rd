@@ -60,7 +60,7 @@ layout( cbind(1,2) )
 # Single subject
 sel = d$Condition == 6 & d$Subject == 20
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot( xDim = c(0,1) )
+blankRTplot( tDim = c(0,1) )
 quantile_points( rt, ch, opt = list( pts = F ) )
 quantile_points( rt, ch, pch = 21, bg = 'white' )
 quantile_points( rt, ch, sel = 0, opt = list( pts = F ), lty = 2 )
@@ -68,7 +68,7 @@ quantile_points( rt, ch, sel = 0, pch = 24, bg = 'white' )
 # Aggregating over multiple subjects
 sel = d$Condition == 6
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( xDim = c(0,1), bty = 'l', cex.axis = 1.5, cex.lab = 1.5 )
+blankRTplot( tDim = c(0,1), bty = 'l', cex.axis = 1.5, cex.lab = 1.5 )
 quantile_points( rt, ch, grp = grp, opt = list( pts = F ), lwd = 2 )
 quantile_points( rt, ch, grp = grp, pch = 21, bg = 'white', cex = 1.2 )
 quantile_points( rt, ch, sel = 0, grp = grp, opt = list( pts = F ), lwd = 2, lty = 2 )

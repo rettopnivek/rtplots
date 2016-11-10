@@ -57,13 +57,13 @@ layout( cbind(1,2) )
 # Single subject
 sel = d$Condition == 4 & d$Subject == 1
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot( yDim = c(0,4), ver='PDF' )
+blankRTplot( pDim = c(0,4), ver='PDF' )
 pdf_curve( rt, ch )
 pdf_curve( rt, ch, sel = 0, lty = 2 )
 # Aggregating over multiple subjects
 sel = d$Condition == 0 # Not all subjects had responses for each choice
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( bty = 'l', ver = 'PDF', yDim = c(0,4), cex.axis = 1.5, cex.lab = 1.5 )
+blankRTplot( bty = 'l', ver = 'PDF', pDim = c(0,4), cex.axis = 1.5, cex.lab = 1.5 )
 pdf_curve( rt, ch, grp = grp, lwd = 2 )
 pdf_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 }

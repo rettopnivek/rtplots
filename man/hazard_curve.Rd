@@ -62,13 +62,13 @@ layout( cbind(1,2) )
 # Single subject
 sel = d$Condition == 4 & d$Subject == 1
 rt = d$RT[sel]; ch = d$Accuracy[sel]
-blankRTplot( yDim = c(0,5), ver='HF' )
+blankRTplot( pDim = c(0,5), ver='HF' )
 hazard_curve( rt, ch )
 hazard_curve( rt, ch, sel = 0, lty = 2 )
 # Aggregating over multiple subjects
 sel = d$Condition == 4
 rt = d$RT[sel]; ch = d$Choice[sel]; grp = d$Subject[sel]
-blankRTplot( bty = 'l', ver = 'HF', yDim = c(0,5), cex.axis = 1.5, cex.lab = 1.5 )
+blankRTplot( bty = 'l', ver = 'HF', pDim = c(0,5), cex.axis = 1.5, cex.lab = 1.5 )
 hazard_curve( rt, ch, grp = grp, lwd = 2 )
 hazard_curve( rt, ch, sel = 0, grp = grp, lwd = 2, lty = 2 )
 }

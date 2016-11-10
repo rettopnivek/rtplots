@@ -4,16 +4,17 @@
 \alias{blankRTplot}
 \title{Blank response time plot}
 \usage{
-blankRTplot(xDim = c(0, 2), yDim = c(0, 1), ver = "CDF", unit = "s",
+blankRTplot(tDim = c(0, 2), pDim = c(0, 1), ver = "CDF", unit = "s",
   ...)
 }
 \arguments{
-\item{xDim}{the minimum and maximum x-axis values.}
+\item{tDim}{the minimum and maximum for the time axis.}
 
-\item{yDim}{the minimum and maximum y-axis values.}
+\item{pDim}{the minimum and maximum for the choice/accuracy/probability
+axis.}
 
 \item{ver}{the type of plot to draw (i.e. 'CDF', 'PDF',
-'HF', 'CAF', or 'blank' ).}
+'HF', 'CAF', 'PvT', or 'blank' ).}
 
 \item{unit}{the unit for the response times (e.g. 'ms' or 's').}
 
@@ -29,6 +30,6 @@ Creates a blank response time plot with standard labels.
 layout( rbind( 1:3, 4:6 ) )
 blankRTplot(); blankRTplot(ver='PDF');
 blankRTplot(ver='CAF'); blankRTplot(ver='HF');
-blankRTplot(ver='blank')
+blankRTplot(ver='PvT'); blankRTplot(ver='blank')
 }
 
