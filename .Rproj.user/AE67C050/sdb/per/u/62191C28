@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#------------------------------#\n# Tests of 'rtplots' functions #\n#------------------------------#\n\n# Load in package\nlibrary( rtplots )\n\n# Extract data\ndata( 'priming_data' )\nd = priming_data\ncolnames( d ) = c( 'S', 'Ac', 'Ch', 'RT', 'Cnd' )\n\n### Single subject\n\ncd = d[ d$S == 1, ]\ncd = cd[,c('RT','Ch','Cnd')]\n\nobj = rtplots( cd, label = c( 'RT', 'Ch' ), keep = cd$Cnd == 8, \n               type = 'QPE', prob = c( 0, seq(.1,.9,.2), 1 ) )\nx11()\nplot( obj )\nlines( obj, type = 'b' )",
+    "created" : 1498253656592.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "811652057",
+    "id" : "62191C28",
+    "lastKnownWriteTime" : 22518200007000166,
+    "last_content_update" : 1498257750628,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

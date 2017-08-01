@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "#---------------#\n# CDF functions #\n#---------------#\n\n# Index\n# Lookup - 01:  j_ecdf_one_level\n# Lookup - 02:  j_cdf_by_bins\n# Lookup - 03:  create_grp_j_ecdf\n# Lookup - 04:  create_cdf_output\n# Lookup - 05:  check_for_cdf_type\n\n# Lookup - 01\nj_ecdf_one_level = function( input, npfd ) {\n  # Purpose:\n  # Computes the joint empirical cumulative distribution\n  # function for data from a single level of the grouping\n  # factor.\n  # Arguments:\n  # input - Forthcoming\n  # npfd  - Forthcoming\n  # Returns:\n  # A list consisting of...\n  # pd = Forthcoming;\n  # xm = Forthcoming;\n  # ym = Forthcoming.\n\n  pd = data.frame( x = rep( NA, input$N ),\n                   y = rep( NA, input$N ),\n                   v = input$ad$v )\n\n  for ( vl in input$val ) {\n    sel = input$ad$v == vl\n    if ( length( sel ) > 0 ) {\n      pd$x[sel] = input$ad$t[ sel ];\n      pd$v[sel] = input$ad$v[ sel ];\n      pd$y[sel] = (1:sum(sel))/nrow(pd)\n    }\n  }\n  out = list( pd = pd, xm = NULL, ym = NULL )\n\n  return( out )\n}\n\n# Lookup - 02\nj_ecdf_by_bins = function( x, bins ) {\n  # Purpose:\n  # Computes the joint cumulative probability\n  # given a vector of observations over a\n  # specified set of values.\n  # Arguments:\n  # x - ...\n  # t - ...\n  # Returns:\n  # ...\n\n  out = sapply( bins, function(t) sum( x <= t )/length(x) )\n\n  return( out )\n}\n\n# Lookup - 03\nj_ecdf_group = function( input, npfd,\n                         T_B = mean, T_b = mean,\n                         T_x = mean ) {\n  # Purpose:\n  # ...\n  # Arguments:\n  # ...\n  # Returns:\n  # ...\n\n  # Initializ output\n  out = list( pd = NULL,\n              xm = NULL, ym = NULL )\n\n  # Initialize output\n  ym = c();\n  pd = matrix( NA, max( npfd$N ), 3 )\n  colnames( pd ) = c( 'x', 'y', 'v' )\n  pd = as.data.frame( pd )\n\n  sta = 1; end = 0\n  for ( i in 1:( input$n_v ) ) {\n\n    # Create empty list\n    ym = c( ym, list( NULL ) )\n\n    # Compute number of bins to use\n    sel = input$ad$v == input$val[i]\n    bins = create_grp_bins( input, i, T_B, T_b )\n\n    # Create index\n    end = end + length( bins )\n    ind = sta:end\n    pd$x[ ind ] = bins;\n    pd$v[ ind ] = input$val[i]\n\n    ecdf = by( input$ad$t[sel],\n               list( input$ad$g[sel] ),\n               function(x) j_ecdf_by_bins( x, bins ) )\n\n    mat = matrix( unlist( ecdf ), length( ecdf ), length(bins),\n                  byrow = T )\n    g_sel = names( ecdf )\n    g_sel = as.character( npfd$G ) %in% g_sel\n\n    # Weight by choice proportion\n    mat = mat * npfd$P[g_sel,i]\n\n    grp_ecdf = apply( mat, 2, T_x )\n    pd$y[ ind ] = grp_ecdf\n    ym[[i]] = mat\n\n    sta = 1 + end\n  }\n\n  pd = pd[ 1:end, ]\n\n  names( ym ) = as.character( input$val )\n  out$pd = pd;\n  out$ym = ym\n\n  return( out )\n}\n\n# Lookup - 04\ncreate_cdf_output = function( input, npfd, ... ) {\n  # Purpose:\n  # ...\n  # Arguments:\n  # ...\n  # Returns:\n  # ...\n\n  plt = NULL\n  if ( input$n_g == 1 ) plt = j_ecdf_one_level( input, npfd )\n  if ( input$n_g > 1 ) plt = j_ecdf_group( input, npfd, ... )\n\n  return( plt )\n}\n\n# Lookup - 05\ncheck_for_cdf_type = function( type ) {\n  # Purpose:\n  # ...\n  # Arguments:\n  # ...\n  # Returns:\n  # ...\n\n  cdf_types = c( 'CDF', 'cdf', 'CdF', 'cDF', 'CDf',\n                 'cdF', 'cDf', 'Cdf', 'distribution',\n                 'DF', 'df', 'ecdf', 'ECDF',\n                 'eCDF', 'EcDF','ECdF','ECDf',\n                 'Ecdf', 'eCdf', 'ecDf',\n                 'ecdF', 'ECdf', 'eCDf', 'ecDF',\n                 'EcdF', 'EcDf', 'eCdF' )\n\n  return( type %in% cdf_types )\n}\n",
+    "created" : 1498253894069.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1391861060",
+    "id" : "DABA6816",
+    "lastKnownWriteTime" : 1495983656,
+    "last_content_update" : 1495983656,
+    "path" : "F:/Stuff/Kevin's Stuff/Postdoc/R packages/rtplots/R/cdf_functions.R",
+    "project_path" : "R/cdf_functions.R",
+    "properties" : {
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

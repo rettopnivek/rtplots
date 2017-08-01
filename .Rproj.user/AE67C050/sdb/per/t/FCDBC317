@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "#------------------------------------#\n# Functions for general distribution #\n# characteristics                    #\n#------------------------------------#\n\n# Index\n# Lookup - 01:  sort_input\n# Lookup - 02:  extract_npfd\n\n# Lookup - 01\nsort_input = function( input, level ) {\n  # Purpose:\n  # ...\n  # Arguments:\n  # ...\n  # Returns:\n  # ...\n\n  at = input$ad\n\n  # Sort response times, conditions on choice value\n  sta = 1; end = 0;\n  for ( vl in input$val ) {\n\n    sel = input$ad$v == vl\n    if ( any( sel ) ) {\n      end = sum(sel) + end\n      ind = sta:end\n      tmp = by( input$ad$t[sel],\n                list( input$ad$g[sel] ), function(x) sort(x) )\n      at$t[ ind ] = as.vector( unlist( tmp ) )\n      at$v[ ind ] = vl\n      # Extract group labels\n      n = sapply( tmp, length )\n      at$g[ ind ] = input$ad$g[ sel ]\n      sta = 1+end\n    }\n\n  }\n\n  # If a specific level for the grouping factor is given\n  if ( !is.null( level ) ) {\n    # If there is more than just one level\n    if ( input$n_g > 1 ) {\n      # If the given level is present\n      if ( level %in% input$g_v ) {\n        at = at[ at$g == level, ]\n        input$ad = at\n        input$n_g = 1\n        input$g_v = level\n        input$N = nrow( at )\n      } else {\n        err = 'Given level does not exist in grouping factor'\n        stop( err, call. = FALSE )\n      }\n    }\n  }\n  if ( is.null( level ) | input$n_g == 1 ) {\n    input$ad = at\n  }\n\n  return( input )\n}\n\n# Lookup - 02\nextract_npfd = function(input) {\n  # Purpose:\n  # Creates a data frame with the number of observations,\n  # proportions, and frequencies for each grouping factor.\n  # Arguments:\n  # input - ...\n  # Returns:\n  # A data frame with...\n  # G = ...\n  # N = ...\n  # P = ...\n  # F = ...\n\n  if ( input$n_g > 1 ) {\n    # Determine the number of observations per group factor\n    npfd = data.frame( G = input$g_v, N = rep( NA, input$n_g ) )\n\n    # Compute the number of observations per grouping factor\n    I = rep( 1, input$N )\n    tmp = by( I, list( input$ad$g ), sum )\n    npfd$N = as.vector( unlist( tmp ) )\n\n    # Determine the proportions/frequencies per value and\n    # group factor\n    tmp = by( input$ad$v, list( input$ad$g ),\n              function(x) p_cat(x,as.character(input$val)) )\n    mat = matrix( unlist( tmp ), input$n_g, 2, byrow = T )\n    colnames(mat) = paste( 'P',\n                           as.character( input$val ), sep = '' )\n    npfd$P = mat\n    mat = round( mat * npfd$N )\n    colnames( mat ) = paste( 'F',\n                             as.character( input$val ), sep = '' )\n    npfd$F = mat\n  } else {\n    npfd = data.frame( G = input$g_v,\n                       N = input$N )\n    npfd$P = matrix( p_cat( input$ad$v, input$val ), 1,\n                     input$n_v )\n    colnames( npfd$P ) = paste( 'P',\n                                as.character( input$val ),\n                                sep = '' )\n    npfd$F = npfd$P * npfd$N\n    colnames( npfd$F ) = paste( 'F',\n                                as.character( input$val ),\n                                sep = '' )\n\n  }\n\n  return( npfd )\n}\n",
+    "created" : 1495985965765.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1012379489",
+    "id" : "FCDBC317",
+    "lastKnownWriteTime" : 1498258298,
+    "last_content_update" : 1498258296884,
+    "path" : "F:/Stuff/Kevin's Stuff/Postdoc/R packages/rtplots/R/gen_dist_char.R",
+    "project_path" : "R/gen_dist_char.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

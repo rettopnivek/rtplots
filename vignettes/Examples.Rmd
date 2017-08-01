@@ -9,6 +9,90 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+## Introduction
+
+This vignette provides a series of examples demonstrating how to use the 'rtplots' package. This package is most useful for quickly creating plots of response time distributions typically obtained in simple psychological experiments, particularly two-alternative forced-choice tasks.
+
+## Installation
+
+The package can be installed via "devtools":
+
+```{r,eval=FALSE}
+install.packages("devtools")
+library(devtools)
+install_github("rettopnivek/rtplots")
+```
+
+Once the package has been installed, we can load it for easy use:
+
+```{r}
+library(rtplots)
+```
+
+## Example data set
+
+The 'rtplots' package includes response time and choice data for 25 subjects who completed a word identification task with immediate word priming. Subjects saw a fixation point, followed by a double presentation of prime word (vertically aligned) that could be shown either 50 or 400 ms. Immediately after, there was a brief flash (~50 ms) of the target word. The prime word could match the target, or it could be different (a lure). Subjects completed two tasks in alternating blocks. First, they completed a forced-choice two-alternative task in which the target and lure words were shown, and the subject had to identify the target word, irrespective of what the prime word had been. Second, subjects were shown a single word (either the target or the lure), and they had to indicate whether this word was the same or different compared to the target word. The following examples all involve this dataset.
+
+```{r}
+# Load in example dataset
+data("priming_data")
+# For easy manipulation
+d = priming_data
+```
+
+## Base figures
+
+Figures using the 'rtplots' package are made in two steps. First, the user creates a base figure, and second, the desired points and curves are added to this pre-existing figure. The package has a convenience function \code{blankRTplot} that can be used to quickly generate a base figure with standard labels. 
+
+### Cumulative distribution curves
+
+First, for clarity, we define a set of new variables for the vectors of response times and choice/accuracy values.
+
+```{r}
+# Single subject
+rt = d$RT[ d$Condition == 4 & d$Subject == 1 ]
+# The package assumes that choice/accuracy is binary and 
+# that values are coded as 0 or 1
+ch = d$Accuracy[ d$Condition == 4 & d$Subject == 1 ]
+print( unique(ch) )
+```
+
+We can then create a figure of the joint cumulative distribution functions for choice/accuracy values of 0 and 1 in three steps:
+
+```{r}
+# Create a base figure
+blankRTplot( 
+  # Lower and upper boundary for time
+  tDim = c( 0, 2 ),
+  # Lower and upper boundary for probability
+  pDim = c( 0, 1 ),
+  # For joint cumulative distribution curves
+  ver = "CDF",
+  # Additional plotting parameters
+  bty = 'n',
+  cex.axis = 1.5,
+  cex.lab = 1.5,
+  lwd = 2
+)
+
+# Add CDF curve for choice/accuracy equal to 1
+cdf_curve( 
+  # Vectors for response times and choice/accuracy
+  rt, ch, 
+  # Additional plotting parameters
+  lwd = 2 )
+
+# Add CDF curve for choice/accuracy equal to 0
+cdf_curve( 
+  # Vectors for response times and choice/accuracy
+  rt, ch,
+  # For ch == 0
+  sel = 0,
+  # Additional plotting parameters
+  lwd = 2,
+  lty = 2 )
+```
+
 Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
 
 - Never uses retina figures
