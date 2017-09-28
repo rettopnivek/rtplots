@@ -28,4 +28,3 @@ A function that computes a specified uncertainty
 interval (such as \eqn{\pm} 2 standard errors from
 the mean) for a 'rtplots' object.
 }
-

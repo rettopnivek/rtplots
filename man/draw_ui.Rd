@@ -36,4 +36,3 @@ A convenience function that draws uncertainty
 intervals computed from a 'rtplots' object onto
 an already existing plot.
 }
-

@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(rtplots)\ncontext(\"Tests for pvt_default_options function\")\n\n# Extract data\ndata( 'priming_data' )\nd = priming_data\ncolnames( d ) = c( 'S', 'Ac', 'Ch', 'RT', 'Cnd' )\n# Create 'rtplots' object\nf = function(x) quantile( x, seq(.1, .9, .2 ) )\n# object = rtplots( d, c( 'RT', 'Ch', 'S', 'Cnd' ), d$Cnd < 8, 'PVT' )\nobject = rtplots( d, c( 'RT', 'Ch', 'S', 'Cnd' ), d$Cnd < 8, 'PVT', f = f )\n\n\nx11()\n\nplot( object )\npvt_plot( object )\n\nplot( object )\npvt_plot( object, keep = object$pd$cv %in% c( 1, 3 ) )\n\nplot( object )\npts = matrix( c( 19, 22, 19, 22 ), 4, 5 )\ncx = matrix( c(.5,.75,1,.75,.5), 4, 5, byrow = T )\nbgc = matrix( c('black','white','black','white'), 4, 5 )\npvt_plot( object, keep = object$pd$cv %in% c( 1, 3 ), pch = pts, cex = cx, bg = bgc )\n\nplot( object )\npvt_plot( object, keep = object$pd$cv %in% c( 1, 3, 5, 7 ), type = 'l' )",
+    "created" : 1506624739942.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "2754788297",
+    "id" : "39AE1896",
+    "lastKnownWriteTime" : 3419473789575321445,
+    "last_content_update" : 1506633568041,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled3"
+    },
+    "relative_order" : 8,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

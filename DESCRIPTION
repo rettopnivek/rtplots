@@ -7,8 +7,9 @@ Author: Kevin Potter
 Maintainer: Kevin Potter <kevin.w.potter@gmail.com>
 Description: A set of plotting functions for examining simple response time and choice data from 
     a psychology experiment.
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown,
+    testthat
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 LazyData: TRUE
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

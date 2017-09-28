@@ -3,7 +3,7 @@
 #-------------------#
 
 # Index
-# Lookup - 01:  p_cat
+# Lookup - 01:  p_cat [tested]
 # Lookup - 02:  ln_interp
 # Lookup - 03:  multiple_options
 # Lookup - 04:  extract_var
@@ -49,7 +49,7 @@ ln_interp = function( x, yPts, xPts ) {
   # yPts - The pair of y-axis points that the point lies between
   # xPts - The pair of x-axis points that the point lies between
   # Returns:
-  # The predicted y-axis point
+  # The predicted y-axis point.
 
   # Determine
   b = diff(yPts)/diff(xPts)
@@ -96,7 +96,7 @@ multiple_options = function( var_options, feasible_var ) {
 }
 
 # Lookup - 04
-extract_var = function( df, label, keep ) {
+extract_var = function( df, label, keep, type ) {
   # Purpose:
   # Extracts response times, choice/accuracy,
   # and grouping variables from a data frame.
@@ -107,6 +107,8 @@ extract_var = function( df, label, keep ) {
   # keep  - A logical vector of matching length
   #         to the number of observations in
   #         df
+  # type  - The type of function (e.g., CDF,
+  #         PDF, etc.)
   # Returns:
   # A list, consisting of...
   # t       = A vector of response times
@@ -118,9 +120,21 @@ extract_var = function( df, label, keep ) {
   # g_v     = The set of unique group indices
   # n_g     = The total number of elements for the
   #           grouping factor
+  # cv_v    = The levels for an optional additional
+  #           covariate
+  # n_cv    = The number of levels for the additional
+  #           covariate
   # N       = The total number of observations
+  # ad      = A dataframe with the response times,
+  #           choice values, and current grouping
+  #           levels
 
   vnames = names( df ) # Extract variable names
+
+  # Define defaults for covariate variable
+  cv = NULL
+  cv_v = NULL
+  n_cv = NULL
 
   # If no labels for RT and choice variables are
   # provided, attempt to locate variables via
@@ -149,7 +163,8 @@ extract_var = function( df, label, keep ) {
 
     # If no labels
     if ( sum( rt_label_sel ) == 0 ) {
-      stop( 'No feasible default variable names for RT found.' )
+      stop( 'No feasible default variable names for RT found',
+            call. = FALSE )
     }
 
     ### Extract choice/accuracy ###
@@ -182,6 +197,7 @@ extract_var = function( df, label, keep ) {
     g = rep( 1, length( t ) )
   }
 
+  # If a single label for RTs is provided
   if ( length( label ) == 1 ) {
 
     # If label is present
@@ -196,6 +212,7 @@ extract_var = function( df, label, keep ) {
 
   }
 
+  # If labels for RT and choice/accuracy are provided
   if ( length( label ) == 2 ) {
 
     if ( all( label %in% names( df ) ) ) {
@@ -209,12 +226,12 @@ extract_var = function( df, label, keep ) {
 
   }
 
-  if ( length( label ) >= 3 ) {
+  if ( length( label ) >= 3 & !check_for_pvt_type(type) ) {
 
     if ( length( label ) > 3 ) {
       warn = paste(
         'More than 3 variable names were provided.', '\n',
-        'Only the first 3 will be used.', '\n' )
+        'Only the first 3 will be used.' )
       warning( warn, call. = FALSE )
       label = label[1:3]
     }
@@ -223,6 +240,33 @@ extract_var = function( df, label, keep ) {
       t = df[ , label[1] ]
       v = df[ , label[2] ]
       g = df[ , label[3] ]
+    } else {
+      stop( 'Variable name(s) not found in data frame',
+            call. = FALSE )
+    }
+
+  }
+
+  is_pvt = check_for_pvt_type(type)
+  if ( is_pvt & length( label ) < 4 )
+    stop( 'Need a grouping factor and an additional covariate for PvT figures',
+          call. = FALSE )
+
+  if ( length( label ) >= 4 & is_pvt ) {
+
+    if ( length( label ) > 4 ) {
+      warn = paste(
+        'More than 4 variable names were provided.', '\n',
+        'Only the first 4 will be used.' )
+      warning( warn, call. = FALSE )
+      label = label[1:4]
+    }
+
+    if ( all( label %in% names( df ) ) ) {
+      t = df[ , label[1] ]
+      v = df[ , label[2] ]
+      g = df[ , label[3] ]
+      cv = df[ , label[4] ]
     } else {
       stop( 'Variable name(s) not found in data frame',
             call. = FALSE )
@@ -244,6 +288,11 @@ extract_var = function( df, label, keep ) {
                    g = cur_g )
   g_v = unique( cur_g )
   n_g = length( g_v )
+  if ( !is.null( cv ) ) {
+    ad$cv = cv[keep]
+    cv_v = unique(cv[keep])
+    n_cv = length( cv_v )
+  }
 
   output = list(
     ad = ad,
@@ -251,6 +300,8 @@ extract_var = function( df, label, keep ) {
     n_v = n_v,
     g_v = g_v,
     n_g = n_g,
+    cv_v = cv_v,
+    n_cv = n_cv,
     N = nrow( ad ) )
 
   return( output )

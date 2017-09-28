@@ -15,7 +15,7 @@
 \item{inc}{the interval for the ticks on the
 x and y-axes (depending on the plot).}
 
-\item{type}{if eqaul to \code{'blank'}, a completely
+\item{type}{if equal to \code{'blank'}, a completely
 blank plot is generated. Otherwise, converted to \code{'n'}.}
 
 \item{xlab}{a character string for the label on the x-axis.}
@@ -31,4 +31,3 @@ blank plot is generated. Otherwise, converted to \code{'n'}.}
 \description{
 Creates a blank plot based on a 'rtplots' object.
 }
-

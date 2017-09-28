@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(rtplots)\ncontext(\"Tests for pvt_default_options function\")\n\npvt_default_options = function( opt, pd, ver ) {\n  \n  R = nrow( pd )\n  C = ncol( pd$y )\n  \n  if ( is.null(opt) ) {\n    \n    if ( ver == 'pch' ) {\n      \n      if ( length( unique( pd$cv ) ) <= 9 ) {\n        inc = 1\n        lev = rep( \" \", nrow( pd ) )\n        for ( u in unique( pd$cv ) ) {\n          lev[ u == pd$cv ] = as.character( inc )\n          inc = inc + 1\n        }\n        out = matrix( lev, R, C )\n      } else {\n        out = matrix( 19, R, C )\n      }\n    }\n    \n    if ( ver == 'cex' ) {\n      out = matrix( 1, R, C )\n    }\n    \n    if ( ver == 'col' ) {\n      out = matrix( 'black', R, C )\n    }\n    \n  } else out = opt\n  \n  return( out )\n}\n",
+    "created" : 1506623335613.000,
+    "dirty" : true,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "2599862131",
+    "id" : "132056CA",
+    "lastKnownWriteTime" : 7358995515036693615,
+    "last_content_update" : 1506624581117,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "tempName" : "Untitled2"
+    },
+    "relative_order" : 6,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

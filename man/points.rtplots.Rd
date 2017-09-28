@@ -25,4 +25,3 @@ be negative.}
 Provides a method to 'rtplots' objects that allows
 for drawing points on an existing plot.
 }
-

@@ -1,5 +1,5 @@
 #---------------#
-# CDF functions #
+# PDF functions #
 #---------------#
 
 # Index
@@ -10,9 +10,9 @@
 # Lookup - 05:  check_for_cdf_type
 
 # Lookup - 01
-j_ecdf_one_level = function( input, npfd ) {
+j_epdf_one_level = function( input, npfd, ... ) {
   # Purpose:
-  # Computes the joint empirical cumulative distribution
+  # Computes the joint empirical probability density
   # function for data from a single level of the grouping
   # factor.
   # Arguments:
@@ -20,6 +20,7 @@ j_ecdf_one_level = function( input, npfd ) {
   #         (defined in 'utility.R')
   # npfd  - The output from the 'extract_npfd' function
   #         (defined in 'gen_dist_char.R')
+  # ...   - Additional variables for the 'density' function
   # Returns:
   # A list consisting of...
   # pd = A dataframe with the x and y plotting values;
@@ -29,13 +30,20 @@ j_ecdf_one_level = function( input, npfd ) {
   pd = data.frame( x = rep( NA, input$N ),
                    y = rep( NA, input$N ),
                    v = input$ad$v )
-
   for ( vl in input$val ) {
     sel = input$ad$v == vl
     if ( length( sel ) > 0 ) {
+
       pd$x[sel] = input$ad$t[ sel ];
+
+      if ( sum( sel ) > 2 ) {
+        xa = pd$x[sel]
+        dn = density( xa, ... )
+        df = approxfun(dn)
+        pd$y[sel] = df(xa) * sum(sel)/nrow(pd)
+      } else pd$y[sel] = ( 1/sum(sel) ) * sum(sel)/nrow(pd)
+
       pd$v[sel] = input$ad$v[ sel ];
-      pd$y[sel] = (1:sum(sel))/nrow(pd)
     }
   }
   out = list( pd = pd, xm = NULL, ym = NULL )
@@ -44,9 +52,9 @@ j_ecdf_one_level = function( input, npfd ) {
 }
 
 # Lookup - 02
-j_ecdf_by_bins = function( x, bins ) {
+j_epdf_by_bins = function( x, bins ) {
   # Purpose:
-  # Computes the joint cumulative probability
+  # Computes the joint probability density
   # given a vector of observations over a
   # specified set of values.
   # Arguments:
@@ -55,17 +63,23 @@ j_ecdf_by_bins = function( x, bins ) {
   # Returns:
   # The empirical CDF at each bin value.
 
-  out = sapply( bins, function(t) sum( x <= t )/length(x) )
+  out = NULL
+
+  if ( length( x ) > 2 ) {
+    dn = density( x )
+    df = approxfun(dn)
+    out = df(bins)
+  } else out = rep( NA, length( x ) )
 
   return( out )
 }
 
 # Lookup - 03
-j_ecdf_group = function( input, npfd,
+j_epdf_group = function( input, npfd,
                          T_B = mean, T_b = mean,
                          T_x = mean ) {
   # Purpose:
-  # Computes the joint cumulative probability over
+  # Computes the joint probability density over
   # multiple levels of a grouping factor.
   # Arguments:
   # input - The output from the 'extract_var' function
@@ -108,20 +122,20 @@ j_ecdf_group = function( input, npfd,
     pd$x[ ind ] = bins;
     pd$v[ ind ] = input$val[i]
 
-    ecdf = by( input$ad$t[sel],
+    epdf = by( input$ad$t[sel],
                list( input$ad$g[sel] ),
-               function(x) j_ecdf_by_bins( x, bins ) )
+               function(x) j_epdf_by_bins( x, bins ) )
 
-    mat = matrix( unlist( ecdf ), length( ecdf ), length(bins),
+    mat = matrix( unlist( epdf ), length( epdf ), length(bins),
                   byrow = T )
-    g_sel = names( ecdf )
+    g_sel = names( epdf )
     g_sel = as.character( npfd$G ) %in% g_sel
 
     # Weight by choice proportion
     mat = mat * npfd$P[g_sel,i]
 
-    grp_ecdf = apply( mat, 2, T_x )
-    pd$y[ ind ] = grp_ecdf
+    grp_epdf = apply( mat, 2, T_x, na.rm = T )
+    pd$y[ ind ] = grp_epdf
     ym[[i]] = mat
 
     sta = 1 + end
@@ -137,9 +151,9 @@ j_ecdf_group = function( input, npfd,
 }
 
 # Lookup - 04
-create_cdf_output = function( input, npfd, ... ) {
+create_pdf_output = function( input, npfd, ... ) {
   # Purpose:
-  # Computes the empirical CDF based on the number
+  # Computes the empirical PDF based on the number
   # grouping factor levels
   # Arguments:
   # input - The output from the 'extract_var' function
@@ -151,30 +165,52 @@ create_cdf_output = function( input, npfd, ... ) {
   # The list of plotting elements.
 
   plt = NULL
-  if ( input$n_g == 1 ) plt = j_ecdf_one_level( input, npfd )
-  if ( input$n_g > 1 ) plt = j_ecdf_group( input, npfd, ... )
+  if ( input$n_g == 1 ) plt = j_epdf_one_level( input, npfd, ... )
+  if ( input$n_g > 1 ) plt = j_epdf_group( input, npfd, ... )
+
+  ch_val = unique( plt$pd$v )
+  tmp = matrix( NA, length( ch_val ), 2 )
+  for ( i in 1:length( ch_val ) ) {
+    sel = which( plt$pd$v == ch_val[i] )
+    tmp[i,] = c( min(sel), max(sel) )
+  }
+
+  new_mat = matrix( NA, nrow( plt$pd ) + nrow( tmp ) * 2, 3 )
+  colnames( new_mat ) = c( 'x', 'y', 'v' )
+  new_mat = as.data.frame( new_mat )
+
+  for ( i in 1:nrow(tmp) ) {
+    shft = i + 1*(i!=1)
+    new_mat[ tmp[i,1]:tmp[i,2] + shft, ] = plt$pd[ tmp[i,1]:tmp[i,2], ]
+    new_mat[ tmp[i,1] + shft - 1, ] = c( plt$pd$x[ tmp[i,1] ],
+                                         0, plt$pd$v[ tmp[i,1] ] )
+    new_mat[ tmp[i,2] + shft + 1, ] = c( plt$pd$x[ tmp[i,2] ],
+                                         0, plt$pd$v[ tmp[i,2] ] )
+  }
+
+  plt$pd = new_mat
 
   return( plt )
 }
 
 # Lookup - 05
-check_for_cdf_type = function( type ) {
+check_for_pdf_type = function( type ) {
   # Purpose:
   # Checks a string character against a list of
-  # possible labels for selecting the CDF option.
+  # possible labels for selecting the PDF option.
   # Arguments:
   # type = The input string
   # Returns:
   # A logical value, equal to 'TRUE' if one of the
   # labels matches the input string.
 
-  cdf_types = c( 'CDF', 'cdf', 'CdF', 'cDF', 'CDf',
-                 'cdF', 'cDf', 'Cdf', 'distribution',
-                 'DF', 'df', 'ecdf', 'ECDF',
-                 'eCDF', 'EcDF','ECdF','ECDf',
-                 'Ecdf', 'eCdf', 'ecDf',
-                 'ecdF', 'ECdf', 'eCDf', 'ecDF',
-                 'EcdF', 'EcDf', 'eCdF' )
+  pdf_types = c( 'PDF', 'pdf', 'PdF', 'pDF', 'PDf',
+                 'pdF', 'pDf', 'Pdf', 'distribution',
+                 'DF', 'df', 'epdf', 'EPDF',
+                 'ePDF', 'EpDF','EPdF','EPDf',
+                 'Epdf', 'ePdf', 'epDf',
+                 'epdF', 'EPdf', 'ePDf', 'epDF',
+                 'EpdF', 'EpDf', 'ePdF' )
 
-  return( type %in% cdf_types )
+  return( type %in% pdf_types )
 }

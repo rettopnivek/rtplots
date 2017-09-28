@@ -25,4 +25,3 @@ be negative.}
 Provides a method to 'rtplots' objects that allows
 for drawing line segments on an existing plot.
 }
-
